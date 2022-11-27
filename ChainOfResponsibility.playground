@@ -1,0 +1,112 @@
+enum Ingredients {
+    case blackthorn
+    case elder
+    case rowan
+    case may
+    case knotweed
+}
+
+protocol Handler: AnyObject {
+    var nextHandler: Handler? { get set }
+    func handle(request: Ingredients) -> String?
+    func setNext(handler: Handler) -> Handler
+}
+
+extension Handler {
+    func setNext(handler: Handler) -> Handler {
+        self.nextHandler = handler
+        return handler
+    }
+    
+    func handle(request: Ingredients) -> String? {
+        nextHandler?.handle(request: request)
+    }
+}
+
+class BlackthornHandler: Handler {
+    var nextHandler: Handler?
+    
+    func handle(request: Ingredients) -> String? {
+        if (request == .blackthorn) {
+            return "Adding \(request) to the brew.\n"
+        } else {
+            return nextHandler?.handle(request: request)
+        }
+    }
+}
+
+class ElderHandler: Handler {
+    var nextHandler: Handler?
+    
+    func handle(request: Ingredients) -> String? {
+        
+        if (request == .elder) {
+            return "Adding \(request) to the brew.\n"
+        } else {
+            return nextHandler?.handle(request: request)
+        }
+    }
+}
+
+class RowanHandler: Handler {
+    var nextHandler: Handler?
+    
+    func handle(request: Ingredients) -> String? {
+        if (request == .rowan) {
+            return "Adding \(request) to the brew.\n"
+        } else {
+            return nextHandler?.handle(request: request)
+        }
+    }
+}
+
+class MayHandler: Handler {
+    var nextHandler: Handler?
+    
+    func handle(request: Ingredients) -> String? {
+        if (request == .may) {
+            return "Adding \(request) to the brew.\n"
+        } else {
+            return nextHandler?.handle(request: request)
+        }
+    }
+}
+
+class KnotweedHandler: Handler {
+    var nextHandler: Handler?
+    
+    func handle(request: Ingredients) -> String? {
+        if (request == .knotweed) {
+            return "Adding \(request) to the brew.\n"
+        } else {
+            return nextHandler?.handle(request: request)
+        }
+    }
+}
+
+class Cauldron {
+    static func brew(with ingredients: [Ingredients], using handler: Handler) {
+        for item in ingredients {
+            guard let result = handler.handle(request: item) else {
+                print(" - \(item) is not compatible with the brew \n")
+                return
+            }
+            print(" + " + result)
+        }
+    }
+}
+
+class WitchApp {
+    func test() {
+        let blackthorn = BlackthornHandler()
+        let elder = ElderHandler()
+        let rowan = RowanHandler()
+        let may = MayHandler()
+        let knotweed = KnotweedHandler()
+        blackthorn.setNext(handler: elder).setNext(handler: rowan).setNext(handler: may)//.setNext(handler: knotweed)
+        
+        Cauldron.brew(with: [.blackthorn, .elder, .rowan, .may, .knotweed], using: blackthorn)
+    }
+}
+
+WitchApp().test()
